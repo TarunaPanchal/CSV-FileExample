@@ -19,26 +19,42 @@ app.post('/', function (req, res) {
 	var studentFile = req.files.file;
 
 	var students = [];
-    
+		
+	// Student.create({"firstName":"MAHENDRA","lastName":"PANCHAL","age":25,"date":new Date()}, function(err, documents) {
+	// 	if (err) throw err;
+	// 				res.send(documents);
+	// 				console.log("students have been successfully uploaded");
+	// 				//res.send(students.length + ' students have been successfully uploaded.');           
+	//  });
+
+
 	csv
-	 .fromString(studentFile.data.toString(),  {
+	 .fromString(studentFile.data,  {
 		 headers: true,ignoreEmpty: true 
 	 })
 	 .on("data", function(data){
+
+		console.log('DATA =============>' , data );
+			let _data = parseInt(data['age']);
+			data['age'] = _data;		
 		 data['_id'] = new mongoose.Types.ObjectId();		 
 		 students.push(data);
 	 })
 	 .on("end", function(){
+
+		console.log('students=============>' , students);
+
         Student.create(students, function(err, documents) {
 			if (err) throw err;
             res.send(students);
             console.log("students have been successfully uploaded");
             //res.send(students.length + ' students have been successfully uploaded.');           
      });
-    });
+	  });
+
 	
   })
 
-app.listen(1802,() =>{
+app.listen(1803,() =>{
     console.log("Server running 1802");
 })
